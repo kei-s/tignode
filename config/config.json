@@ -1,0 +1,14 @@
+{
+  "ircd": {
+    "network": "tignode",
+    "hostname": "localhost",
+    "serverDescription": "Twitter IRC Gateway powered by Node",
+    "serverName": "TIGNode",
+    "port": 16673,
+    "whoWasLimit": 10000
+  },
+  "twitter": {
+    "consumer_key": "rRMG680IxzZeO5rN12FxKQ",
+    "consumer_secret": "FJ9tvh7ngTLU78ykg3lBUGr667OIccPtVpQyaMhsZiA"
+  }
+}
