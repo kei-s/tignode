@@ -7,20 +7,25 @@ Twitter = require 'twitter'
 Ircd = require './ircd'
 Stream = require './stream'
 Config = require './config'
+PluginManager = require './plugin_manager'
 
 class TigNode
   constructor: ->
     @tignode = this
-    file = path.join __dirname,'..','config','config.json'
-    @config = JSON.parse(fs.readFileSync(file).toString())
+    @config = this.config()
     @access_token = new Config('access_token')
-    @twitter = new Twitter(@config.twitter)
-    if @access_token.data.access_token_key && @access_token.data.access_token_secret
-      @twitter.options.access_token_key = @access_token.data.access_token_key
-      @twitter.options.access_token_secret = @access_token.data.access_token_secret
-    @ircd = new Ircd(@config.ircd, @twitter)
-    @stream = new Stream(@ircd, @twitter)
+    @twitter = new Twitter(_.extend(@config.twitter,{
+      access_token_key: @access_token.data.access_token_key,
+      access_token_secret: @access_token.data.access_token_secret
+    }))
+    @pluginManager = new PluginManager(path.join(__dirname,'..','plugins'))
+    @ircd = new Ircd(@config.ircd, @pluginManager)
+    @stream = new Stream(@ircd, @twitter, @pluginManager)
     @ircd.register('tignode')
+
+  config: ->
+    file = path.join __dirname,'..','config','config.json'
+    JSON.parse(fs.readFileSync(file).toString())
 
   registration: ->
     tignode = this
