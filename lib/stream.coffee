@@ -25,17 +25,17 @@ class Stream
     else if data.direct_message
       { event: 'direct_message', user: data.direct_message.sender.screen_name, subject: data.direct_message.text }
 
-  process: (data) ->
+  read: (data) ->
     response = this.filter(data)
     return unless response
-    processed = @pluginManager.process(response.event, response.user, response.subject, data)
-    (processed.channels || []).forEach (channel) =>
-      @ircd.message processed.user, channel, processed.message
+    @pluginManager.emit 'process', response.event, response.user, response.subject, data, (processed) =>
+      (processed.channels || []).forEach (channel) =>
+        @ircd.message processed.user, channel, processed.message
 
   start: (user) ->
-    @pluginManager.process('start', user, @ircd, this)
-    @twitter.stream 'user', (stream) =>
-      stream.on 'data', (data) =>
-        this.process(data)
+    @pluginManager.emit 'process', 'start', user, @ircd, this, =>
+      @twitter.stream 'user', (stream) =>
+        stream.on 'data', (data) =>
+          this.read(data)
 
 module.exports = Stream

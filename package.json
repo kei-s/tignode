@@ -15,7 +15,8 @@
     "coffee-script": "",
     "ircdjs": "",
     "twitter": "",
-    "underscore": ""
+    "underscore": "",
+    "async": ""
   },
   "devDependencies": {}
 }
