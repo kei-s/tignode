@@ -2,7 +2,7 @@
 {User} = require 'ircdjs/lib/user'
 
 class Ircd
-  constructor: (@config, @pluginManager) ->
+  constructor: (@config, @twitter, @pluginManager) ->
     @server = new Server
     @server.config = @config
     @events = @server.events
@@ -27,8 +27,9 @@ class Ircd
 
   install_event_handler: ->
     @server.events.on "PRIVMSG", (user, target, message) =>
-      console.log message
-      @pluginManager.process('PRIVMSG', user, message, {target: target, message: message, ircd: this})
+      @pluginManager.process 'PRIVMSG', user, message, target, (processed) =>
+        @twitter.post '/statuses/update.json', { status: processed.message }, (data) ->
+          console.log data
 
   start: ->
     this.install_event_handler()

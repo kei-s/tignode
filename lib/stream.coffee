@@ -28,12 +28,13 @@ class Stream
   read: (data) ->
     response = this.filter(data)
     return unless response
-    @pluginManager.emit 'process', response.event, response.user, response.subject, data, (processed) =>
+    @pluginManager.process response.event, response.user, response.subject, data, (processed) =>
       (processed.channels || []).forEach (channel) =>
         @ircd.message processed.user, channel, processed.message
 
   start: (user) ->
-    @pluginManager.emit 'process', 'start', user, @ircd, this, =>
+    @pluginManager.process 'start', user, @ircd, this, =>
+      console.log 'stream start'
       @twitter.stream 'user', (stream) =>
         stream.on 'data', (data) =>
           this.read(data)

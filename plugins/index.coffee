@@ -1,4 +1,6 @@
 module.exports = [
   'base',
-  'expand_url'
+  'expand_url',
+  'resolve_shortened_url',
+  'update'
 ]

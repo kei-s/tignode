@@ -4,18 +4,27 @@ _ = require 'underscore'
 async = require 'async'
 {EventEmitter} = require 'events'
 
-class Processed extends EventEmitter
-  constructor: ->
+class Process
+  constructor: (@event, @plugins, @data, @callback) ->
     @channels = []
     @user = ''
     @message = ''
 
-    this.on 'commit', (data) =>
-      @channels = data.channels
-      @user = data.user
-      @message = data.message
+  done: ->
+    @current += 1
+    unless @plugins[@current]
+      return @callback(this)
 
-class PluginManager extends EventEmitter
+    if @plugins[@current].listeners(@event).length != 0
+      @plugins[@current].emit(@event, this, @data...)
+    else
+      this.done()
+
+  start: ->
+    @current = -1
+    this.done()
+
+class PluginManager
   constructor: (@dir) ->
     @plugins = {}
     index = require path.join(@dir,'index')
@@ -23,10 +32,8 @@ class PluginManager extends EventEmitter
       _.each require(path.join(@dir,path.basename(file, '.coffee','.js'))), (plugin, name) =>
         @plugins[name] =  plugin
 
-    this.on 'process', (event, data..., callback) =>
-      processed = new Processed
-      async.series _.map(@plugins, (plugin) ->
-        -> plugin.emit(event, processed, data...)
-      ), callback(processed)
+  process: (event, data..., callback) ->
+    process = new Process(event, _.values(@plugins), data, callback)
+    process.start()
 
 module.exports = PluginManager

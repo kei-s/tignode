@@ -2,19 +2,20 @@
 
 class Base extends EventEmitter
   constructor: ->
-    this.on 'start', (response, user, ircd, stream) ->
+    this.on 'start', (process, user, ircd, stream) ->
       ircd.join(user, '#twitter')
+      process.done()
 
-    this.on 'tweet', (response, user, subject, data) ->
-      response = this.publish(response, user, subject)
+    this.on 'tweet', (process, user, subject, data) ->
+      this.publish(process, user, subject)
 
-    this.on 'retweet', (response, user, subject, data) ->
-      response = this.publish(response, user, '♻ '+subject)
+    this.on 'retweet', (process, user, subject, data) ->
+      this.publish(process, user, '♻ '+subject)
 
-  publish: (response, user, subject) ->
-    response.channels.push '#twitter'
-    response.user = user
-    response.message = subject
-    response
+  publish: (process, user, subject) ->
+    process.channels.push '#twitter'
+    process.user = user
+    process.message = subject
+    process.done()
 
 module.exports.base = new Base

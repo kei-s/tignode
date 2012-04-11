@@ -16,8 +16,7 @@ And access to ```localhost:16673``` with your twitter screen_name as nick.
 Config file is ```config/config.json```.
 
 ## (want) TODO
-- Post tweet
-- Store access_token(& secret) after once verified
+- multi line tweet
 - Specing (hmm.. Is it difficult?)
 - Mention, Fav, RT using Typablemap
 - Grouping via channel (I want to do this by 'grouping on apps', not lists on twitter.com)
