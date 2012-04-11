@@ -7,7 +7,7 @@ class Stream
   filter: (data) ->
     if data.text
       if data.retweeted_status
-        { event: 'retweet', user: data.user.screen_name, subject: data.text }
+        { event: 'retweet', user: data.user.screen_name, subject: data.retweeted_status.text }
       else
         { event: 'tweet', user: data.user.screen_name, subject: data.text }
     else if data.event
