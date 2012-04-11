@@ -20,5 +20,4 @@ Config file is ```config/config.json```.
 - Specing (hmm.. Is it difficult?)
 - Mention, Fav, RT using Typablemap
 - Grouping via channel (I want to do this by 'grouping on apps', not lists on twitter.com)
-- Expand t.co URL. (Using ```entities``` in stream data)
 - Event(like Favorited, Followed) would be announced in #events.(?)
