@@ -10,5 +10,8 @@
   "twitter": {
     "consumer_key": "rRMG680IxzZeO5rN12FxKQ",
     "consumer_secret": "FJ9tvh7ngTLU78ykg3lBUGr667OIccPtVpQyaMhsZiA"
+  },
+  "storage": {
+    "typablemap": "200"
   }
 }

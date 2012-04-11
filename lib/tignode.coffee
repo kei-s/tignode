@@ -5,6 +5,7 @@ path = require 'path'
 {User} = require 'ircdjs/lib/user'
 Twitter = require 'twitter'
 Ircd = require './ircd'
+Storage = require './storage'
 Stream = require './stream'
 Config = require './config'
 PluginManager = require './plugin_manager'
@@ -20,7 +21,8 @@ class TigNode
     }))
     @pluginManager = new PluginManager(path.join(__dirname,'..','plugins'))
     @ircd = new Ircd(@config.ircd, @twitter, @pluginManager)
-    @stream = new Stream(@ircd, @twitter, @pluginManager)
+    @storage = new Storage(@config.storage)
+    @stream = new Stream(@ircd, @twitter, @pluginManager, @storage)
     @ircd.register('tignode')
 
   config: ->
@@ -70,4 +72,4 @@ exports.run = ->
 
   # signal for debug
   process.on 'SIGUSR2', ->
-    console.log(tignode.ircd.server.users.registered)
+    console.log(tignode.storage.cache.map)
