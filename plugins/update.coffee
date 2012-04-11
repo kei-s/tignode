@@ -2,7 +2,7 @@
 
 class Update extends EventEmitter
   constructor: ->
-    this.on 'PRIVMSG', (process, user, message, target, ircd) ->
+    this.on 'PRIVMSG', (process, user, message, target) ->
       process.message = message
       process.done()
 
