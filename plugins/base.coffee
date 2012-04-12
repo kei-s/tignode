@@ -10,7 +10,7 @@ class Base extends EventEmitter
       this.publish(process, user, subject)
 
     this.on 'retweet', (process, user, subject, data) ->
-      this.publish(process, user, '♻ RT '+data.retweeted_status.user.screen_name+': '+subject)
+      this.publish(process, user, '♻ RT @'+data.retweeted_status.user.screen_name+': '+subject)
 
   publish: (process, user, subject) ->
     process.channels.push '#twitter'
