@@ -17,6 +17,7 @@ Config file is ```config/config.json```.
 
 ## (want) TODO
 - multi line tweet
+- character reference (like &gt;)
 - Specing (hmm.. Is it difficult?)
 - Mention, Fav, RT using Typablemap
 - Grouping via channel (I want to do this by 'grouping on apps', not lists on twitter.com)

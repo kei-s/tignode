@@ -14,9 +14,7 @@ class TypableMap
  pya pyu pyo".split(" ")
 
   @divmod: (a, b) ->
-    r = a % b
-    n = Math.floor(a / b)
-    [n, r]
+    [Math.floor(a / b), a % b]
 
   constructor: (length)->
     @seq = TypableMap.roma

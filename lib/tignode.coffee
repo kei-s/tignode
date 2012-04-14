@@ -72,4 +72,11 @@ exports.run = ->
 
   # signal for debug
   process.on 'SIGUSR2', ->
-    console.log(tignode.storage.cache.map)
+    console.log _.map tignode.storage.cache.map, (data, key) ->
+      [
+        key,
+        data.id,
+        data.in_reply_to_status_id,
+        data.user.screen_name,
+        data.text
+      ].join()

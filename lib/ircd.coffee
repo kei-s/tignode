@@ -28,7 +28,7 @@ class Ircd
   install_event_handler: ->
     @server.events.on "PRIVMSG", (user, target, message) =>
       @pluginManager.process 'PRIVMSG', user, message, target, (processed) =>
-        @twitter.post '/statuses/update.json', { status: processed.message }, (data) ->
+        @twitter.post '/statuses/update.json', { status: processed.message }, (data) =>
           console.log data
 
   start: ->

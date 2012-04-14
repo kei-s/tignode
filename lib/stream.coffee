@@ -29,7 +29,7 @@ class Stream
     response = this.filter(data)
     return unless response
     @storage.store(data)
-    @pluginManager.process response.event, response.user, response.subject, data, (processed) =>
+    @pluginManager.process response.event, response.user, response.subject, data, @storage, (processed) =>
       (processed.channels || []).forEach (channel) =>
         @ircd.message processed.user, channel, processed.message
 

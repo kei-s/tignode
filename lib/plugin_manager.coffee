@@ -5,7 +5,7 @@ async = require 'async'
 {EventEmitter} = require 'events'
 
 class Process
-  constructor: (@event, @plugins, @data, @callback) ->
+  constructor: (@event, @plugins, @parameters, @callback) ->
     @channels = []
     @user = ''
     @message = ''
@@ -16,7 +16,7 @@ class Process
       return @callback(this)
 
     if @plugins[@current].listeners(@event).length != 0
-      @plugins[@current].emit(@event, this, @data...)
+      @plugins[@current].emit(@event, this, @parameters...)
     else
       this.done()
 
@@ -32,8 +32,8 @@ class PluginManager
       _.each require(path.join(@dir,path.basename(file, '.coffee','.js'))), (plugin, name) =>
         @plugins[name] =  plugin
 
-  process: (event, data..., callback) ->
-    process = new Process(event, _.values(@plugins), data, callback)
+  process: (event, parameters..., callback) ->
+    process = new Process(event, _.values(@plugins), parameters, callback)
     process.start()
 
 module.exports = PluginManager

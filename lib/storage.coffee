@@ -1,3 +1,4 @@
+_ = require 'underscore'
 TypableMap = require './typablemap'
 
 class Storage
@@ -5,6 +6,11 @@ class Storage
     @cache = new TypableMap(@config.typablemap)
 
   store: (data) ->
-    @cache.push data
+    return unless data.id
+    @cache.push(data)
+
+  getByStatusId: (statusId) ->
+    _.find @cache.map, (data) ->
+      data.id == statusId
 
 module.exports = Storage
