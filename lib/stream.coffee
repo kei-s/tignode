@@ -28,8 +28,8 @@ class Stream
   read: (data) ->
     response = this.filter(data)
     return unless response
-    @storage.store(data)
-    @pluginManager.process response.event, response.user, response.subject, data, @storage, (processed) =>
+    typableId = @storage.store(data)
+    @pluginManager.process response.event, response.user, response.subject, data, @storage, typableId, (processed) =>
       (processed.channels || []).forEach (channel) =>
         @ircd.message processed.user, channel, processed.message
 
