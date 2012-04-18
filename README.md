@@ -21,4 +21,5 @@ Config file is ```config/config.json```.
 - Specing (hmm.. Is it difficult?)
 - Mention, Fav, RT using Typablemap
 - Grouping via channel (I want to do this by 'grouping on apps', not lists on twitter.com)
-- Event(like Favorited, Followed) would be announced in #events.(?)
+-- remaining implementation KICK. PART
+- Event(like Favorited, Followed) would be announced in #events
