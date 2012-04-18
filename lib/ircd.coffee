@@ -12,9 +12,10 @@ class Ircd
     @server.channels.find(channelName)
 
   register: (nick) ->
-    user = new User(null, @server)
-    user.nick = nick
-    @server.users.register(user)
+    unless user = @server.users.find(nick)
+      user = new User(null, @server)
+      user.nick = nick
+      @server.users.register(user)
     user
 
   message: (nick, channelName, message) ->
@@ -27,10 +28,23 @@ class Ircd
       @server.channels.message user, @server.channels.find(channelName), line
 
   install_event_handler: ->
-    @server.events.on "PRIVMSG", (user, target, message) =>
-      @pluginManager.process 'PRIVMSG', user, message, target, (processed) =>
+    @server.events.on "PRIVMSG", (me, target, message) =>
+      @pluginManager.process 'PRIVMSG', me, message, target, (processed) =>
         @twitter.post '/statuses/update.json', { status: processed.message }, (data) =>
-          console.log data
+
+    @server.events.on "JOIN", (me, channelNames) =>
+      @pluginManager.process 'JOIN', me, channelNames.split(','), (processed) =>
+
+    @server.events.on "PART", (me, channelName, partMessage) =>
+      @pluginManager.process 'PART', me, channelName, partMessage (processed) =>
+
+    @server.events.on "INVITE", (me, nick, channelName) =>
+      user = this.register(nick)
+      this.join(user, channelName)
+      @pluginManager.process 'INVITE', me, nick, channelName, (processed) =>
+
+    @server.events.on "KICK", (me, channels, users, kickMessage) =>
+      @pluginManager.process 'KICK', me, channels.split(','), users.split(','), kickMessage, (processed) =>
 
   start: ->
     this.install_event_handler()

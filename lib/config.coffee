@@ -9,9 +9,12 @@ class Config
     else
       @data = {}
 
+  update: (callback) ->
+    callback(@data)
+    this.save(@data)
+
   save: (data)->
     @data = data
     fs.writeFileSync(@file, JSON.stringify(@data))
-
 
 module.exports = Config

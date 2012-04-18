@@ -4,5 +4,6 @@ module.exports = [
   'resolve_shortened_url',
   'show_typablemap',
   'show_reply',
+  'channel',
   'update'
 ]

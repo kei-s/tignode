@@ -2,8 +2,8 @@
 
 class Base extends EventEmitter
   constructor: ->
-    this.on 'start', (process, user, ircd, stream) ->
-      ircd.join(user, '#twitter')
+    this.on 'start', (process, me, ircd, stream) ->
+      ircd.join(me, '#twitter')
       process.done()
 
     this.on 'tweet', (process, user, subject, data) ->
