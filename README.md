@@ -16,7 +16,7 @@ And access to ```localhost:16673``` with your twitter screen_name as nick.
 Config file is ```config/config.json```.
 
 ## (want) TODO
-- multi line tweet
+- own tweet's echo back
 - character reference (like &gt;)
 - Specing (hmm.. Is it difficult?)
 - Mention, Fav, RT using Typablemap

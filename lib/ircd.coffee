@@ -23,7 +23,8 @@ class Ircd
       u.nick = nick
       u
 
-    @server.channels.message user, @server.channels.find(channelName), message
+    message.split("\n").forEach (line) =>
+      @server.channels.message user, @server.channels.find(channelName), line
 
   install_event_handler: ->
     @server.events.on "PRIVMSG", (user, target, message) =>
