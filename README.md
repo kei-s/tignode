@@ -15,6 +15,9 @@ And access to ```localhost:16673``` with your twitter screen_name as nick.
 ## Configuration
 Config file is ```config/config.json```.
 
+## Node Version
+For Emoji(絵文字) Handling, use 0.7.7 or later. (Earlier 0.7.7, it works except for message containing Emoji)
+
 ## (want) TODO
 - own tweet's echo back
 - character reference (like &gt;)
