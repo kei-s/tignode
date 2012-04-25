@@ -1,10 +1,10 @@
-fs = require 'fs'
 path = require 'path'
+fs = require 'fs'
 
 class Config
   constructor: (@name) ->
     @file = path.join __dirname,'..','config',"#{@name}.json"
-    if path.existsSync(@file)
+    if fs.existsSync(@file)
       @data = JSON.parse(fs.readFileSync(@file).toString())
     else
       @data = {}
