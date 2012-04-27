@@ -2,7 +2,7 @@ _ = require 'underscore'
 fs = require 'fs'
 path = require 'path'
 
-{User} = require 'ircdjs/lib/user'
+{UserDatabase} = require 'ircdjs/lib/storage'
 Twitter = require 'twitter'
 Ircd = require './ircd'
 Storage = require './storage'
@@ -31,17 +31,16 @@ class TigNode
 
   registration: ->
     tignode = this
-    User.prototype._register = User.prototype.register
-    User.prototype.register = ->
-      _user = this
-      this._register()
-      if this.registered
+    UserDatabase.prototype._register = UserDatabase.prototype.register
+    UserDatabase.prototype.register = (user, username, hostname, servername, realname) ->
+      _user = user
+      this._register(user, username, hostname, servername, realname)
+      if user.registered
         _.bind( ->
-          @user = _user
           if @twitter.options.access_token_key && @twitter.options.access_token_secret
-            @stream.start(@user)
+            @stream.start(user)
           else
-            @ircd.join(_user, '#welcome')
+            @ircd.join(user, '#welcome')
             @twitter.oauth.getOAuthRequestToken (err, token, token_secret, parsedQueryString) =>
               # on PIN Code
               @ircd.events.once "PRIVMSG", (user, target, verifier) =>
@@ -53,7 +52,7 @@ class TigNode
                     }
                     @twitter.options.access_token_key = access_token
                     @twitter.options.access_token_secret = access_token_secret
-                    @stream.start(@user)
+                    @stream.start(user)
 
               authorize_url = @twitter.options.authorize_url + '?oauth_token=' + token
               message = "Please approve me at #{authorize_url}"
@@ -64,6 +63,7 @@ class TigNode
   start: ->
     @tignode.registration()
     @ircd.start()
+    console.log 'tignode start'
 
 exports.run = ->
   # start
