@@ -4,7 +4,7 @@ fs = require 'fs'
 class Config
   constructor: (@name) ->
     @file = path.join __dirname,'..','config',"#{@name}.json"
-    if fs.existsSync(@file)
+    if path.existsSync(@file)
       @data = JSON.parse(fs.readFileSync(@file).toString())
     else
       @data = {}
