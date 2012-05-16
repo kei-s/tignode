@@ -1,3 +1,4 @@
+_ = require 'underscore'
 {Server} = require 'ircdjs/lib/server'
 {User} = require 'ircdjs/lib/user'
 
@@ -27,10 +28,20 @@ class Ircd
     message.split("\n").forEach (line) =>
       @server.channels.message user, @server.channels.find(channelName), line
 
-  install_event_handler: ->
+  noticeAll: (user, message, excepts=[]) ->
+    _.chain(@server.channels.registered).map((channel,name) ->
+      return name
+    ).reject((name) ->
+      _.include excepts, name
+    ).value().forEach (name) ->
+      user.send user.mask, 'NOTICE', name, ':' + message
+
+  installEventHandler: ->
     @server.events.on "PRIVMSG", (me, target, message) =>
+      return if target == '#welcome'
       @pluginManager.process 'PRIVMSG', me, message, target, (processed) =>
         @twitter.post '/statuses/update.json', { status: processed.message }, (data) =>
+          console.log data
 
     @server.events.on "JOIN", (me, channelNames) =>
       @pluginManager.process 'JOIN', me, channelNames.split(','), (processed) =>
@@ -47,7 +58,7 @@ class Ircd
       @pluginManager.process 'KICK', me, channels.split(','), users.split(','), kickMessage, (processed) =>
 
   start: ->
-    this.install_event_handler()
+    this.installEventHandler()
     @server.start()
 
 module.exports = Ircd

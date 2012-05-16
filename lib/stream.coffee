@@ -25,19 +25,24 @@ class Stream
     else if data.direct_message
       { event: 'direct_message', user: data.direct_message.sender.screen_name, subject: data.direct_message.text }
 
-  read: (data) ->
+  read: (data, me) ->
     response = this.filter(data)
     return unless response
     typableId = @storage.store(data)
     @pluginManager.process response.event, response.user, response.subject, data, @storage, typableId, (processed) =>
       (processed.channels || []).forEach (channel) =>
-        @ircd.message processed.user, channel, processed.message
+        if processed.user == me.nick
+          console.log processed.message
+          console.log processed.message.replace(/(?:\d{1,2})?/g,"")
+          @ircd.noticeAll me, processed.message.replace(/(?:\d{1,2})?/g,"")
+        else
+          @ircd.message processed.user, channel, processed.message
 
   start: (user) ->
     @pluginManager.process 'start', user, @ircd, this, =>
       console.log 'stream start'
       @twitter.stream 'user', (stream) =>
         stream.on 'data', (data) =>
-          this.read(data)
+          this.read(data, user)
 
 module.exports = Stream
