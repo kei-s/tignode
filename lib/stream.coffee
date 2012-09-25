@@ -7,6 +7,7 @@ class Stream extends EventEmitter
     @numReceived = 0
     @lastReceived = new Date()
     @numRetry = 0
+    @connected = false
 
   filter: (data) ->
     if data.text
@@ -67,6 +68,9 @@ class Stream extends EventEmitter
         this.connect(user)
       , wait
 
+    @on 'status', (status) =>
+      console.info "#{@numReceived} tweets, #{status.tps.toFixed(1)} TPS, delay: #{status.delay.toFixed(1)} s, last: #{status.last.toFixed(1)} s"
+
   connect: (user) ->
     @twitter.stream 'user', (stream) =>
       stream.on 'data', (data) =>
@@ -82,9 +86,22 @@ class Stream extends EventEmitter
         @emit 'end'
         stream.destroy
 
-  monitor: ->
+  monitor: =>
     now = new Date()
     last = (now - @lastReceived) / 1000
+    delta = (now - @lastChecked) / 1000
+    tps = @numReceived / delta
+    delay = (now - @mostRecent) / 1000
+    status =
+      tps: tps
+      delay: delay
+      last: last
+      numReceived: @numReceived
+      from: @lastChecked
+      to: now
+
+    if @connected
+      @emit 'status', status
 
     if @connected && last > 30
       console.log 'stream no response'
