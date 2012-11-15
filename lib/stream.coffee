@@ -7,6 +7,7 @@ class Stream extends EventEmitter
     @numReceived = 0
     @lastReceived = new Date()
     @numRetry = 0
+    @stallSec = 30
     @connected = false
 
   filter: (data) ->
@@ -18,7 +19,7 @@ class Stream extends EventEmitter
     else if data.event
       switch data.event
         when 'list_member_added', 'list_member_removed'
-          { event: data.event, user: data.source.screen_name, subject:  data.target_object.slug }
+          { event: data.event, user: data.source.screen_name, subject: data.target_object.slug }
         when 'favorite', 'unfavorite'
           { event: data.event, user: data.source.screen_name, subject: data.target_object.text }
         when 'follow'
@@ -59,8 +60,7 @@ class Stream extends EventEmitter
         if !@mostRecent || @mostRecent < t
           @mostRecent = t
 
-    @on 'end', =>
-      @connected = false
+    @on 'reconnect', =>
       wait = 1000 * Math.pow(2, @numRetry)
       console.log "Reconnecting: #{@numRetry} times, wait: #{wait}"
       @numRetry += 1
@@ -71,20 +71,24 @@ class Stream extends EventEmitter
     @on 'status', (status) =>
       console.info "#{@numReceived} tweets, #{status.tps.toFixed(1)} TPS, delay: #{status.delay.toFixed(1)} s, last: #{status.last.toFixed(1)} s"
 
+    @on 'end', (message) =>
+      console.log "[STREAM:END] #{message}"
+      @connected = false
+      @stream.destroy()
+      @emit 'reconnect'
+
   connect: (user) ->
     @twitter.stream 'user', (stream) =>
+      @stream = stream
       stream.on 'data', (data) =>
         @connected = true
         this.read(data, user)
         @emit 'receive', data
       stream.on 'error', (error) =>
-        console.log 'stream error'
-        @emit 'end'
-        stream.destroy
+        @emit 'end', "ERROR #{error}"
       stream.on 'end', (response) =>
-        console.log 'stream end'
-        @emit 'end'
-        stream.destroy
+        if @connected
+          @emit 'end', 'END'
 
   monitor: =>
     now = new Date()
@@ -103,9 +107,8 @@ class Stream extends EventEmitter
     if @connected
       @emit 'status', status
 
-    if @connected && last > 30
-      console.log 'stream no response'
-      @emit 'end'
+    if @connected && last > @stallSec
+      @emit 'end', 'NO RESPONSE'
 
     @numReceived = 0
     @lastChecked = new Date()
