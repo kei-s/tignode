@@ -41,7 +41,7 @@ class Ircd
       return if target == '#welcome'
       @pluginManager.process 'PRIVMSG', me, message, target, (processed) =>
         @twitter.post '/statuses/update.json', { status: processed.message }, (data) =>
-          console.log data
+          # noop
 
     @server.events.on "JOIN", (me, channelNames) =>
       @pluginManager.process 'JOIN', me, channelNames.split(','), (processed) =>
