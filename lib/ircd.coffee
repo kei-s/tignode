@@ -3,7 +3,7 @@ _ = require 'underscore'
 {User} = require 'ircdjs/lib/user'
 
 class Ircd
-  constructor: (@config, @twitter, @pluginManager) ->
+  constructor: (@config, @twitter, @pluginManager, @storage) ->
     @server = new Server
     @server.config = @config
     @events = @server.events
@@ -39,9 +39,7 @@ class Ircd
   installEventHandler: ->
     @server.events.on "PRIVMSG", (me, target, message) =>
       return if target == '#welcome'
-      @pluginManager.process 'PRIVMSG', me, message, target, (processed) =>
-        @twitter.post '/statuses/update.json', { status: processed.message }, (data) =>
-          # noop
+      @pluginManager.process 'PRIVMSG', me, message, target, @twitter, @storage, (processed) =>
 
     @server.events.on "JOIN", (me, channelNames) =>
       @pluginManager.process 'JOIN', me, channelNames.split(','), (processed) =>
