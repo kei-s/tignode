@@ -17,6 +17,27 @@ class Base extends EventEmitter
       process.message = message
       process.done()
 
+    # Callback sample
+    this.on 'CTCP', (process, me, type, text, channel, twitter, storage) ->
+      process.done()
+
+    # Callback sample
+    this.on 'JOIN', (process, me, channelNames) ->
+      process.done()
+
+    # Callback sample
+    this.on 'PART', (process, me, channelName, partMessage) ->
+      process.done()
+
+    # Callback sample
+    this.on 'INVITE', (process, me, nick, channelName) ->
+      process.done()
+
+    # Callback sample
+    this.on 'KICK', (process, me, channels, users, kickMessage) ->
+      process.done()
+
+
   publish: (process, user, subject) ->
     process.channels.push '#twitter'
     process.user = user

@@ -36,27 +36,50 @@ class Ircd
     ).value().forEach (name) ->
       user.send user.mask, 'NOTICE', name, ':' + message
 
-  installEventHandler: ->
-    @server.events.on "PRIVMSG", (me, target, message) =>
+  installCommandHandler: ->
+    originalCommands = {}
+    for command in ['PRIVMSG', 'JOIN', 'PART', 'INVITE', 'KICK']
+      originalCommands[command] = @server.commands[command]
+
+    @server.commands['PRIVMSG'] = (me, target, message) =>
       return if target == '#welcome'
-      @pluginManager.process 'PRIVMSG', me, message, target, @twitter, @storage, (processed) =>
+      if message[0] == '\u0001' && message.lastIndexOf('\u0001') > 0
+        regexp = /\u0001([^\u0001]*)\u0001/g
+        while (matched = regexp.exec message)?
+          ctcp_message = matched[1].replace(/\u0010n/g,'\n')
+                                   .replace(/\u0010r/g,'\r')
+                                   .replace(/\u0010\u0030/g,'\u0000')
+                                   .replace(/\u0010\u0010/g,'\u0010')
+                                   .replace(/\\a/g,'\u0001')
+                                   .replace(/\\\\/g, '\\')
+          [type, texts...] = ctcp_message.split(' ')
+          text = texts.join(' ')
+          @pluginManager.process 'CTCP', me, type, text, target, @twitter, @storage, (processed) =>
+            originalCommands['PRIVMSG'].apply(@server.commands, [me, target, processed.message])
+      else
+        @pluginManager.process 'PRIVMSG', me, message, target, @twitter, @storage, (processed) =>
+          originalCommands['PRIVMSG'].apply(@server.commands, [me, target, processed.message])
 
-    @server.events.on "JOIN", (me, channelNames) =>
+    @server.commands['JOIN'] = (me, channelNames) =>
       @pluginManager.process 'JOIN', me, channelNames.split(','), (processed) =>
+        originalCommands['JOIN'].apply(@server.commands, [me, channelNames])
 
-    @server.events.on "PART", (me, channelName, partMessage) =>
+    @server.commands['PART'] = (me, channelName, partMessage) =>
       @pluginManager.process 'PART', me, channelName, partMessage (processed) =>
+        originalCommands['PART'].apply(@server.commands, [me, channelName, partMessage])
 
-    @server.events.on "INVITE", (me, nick, channelName) =>
+    @server.commands['INVITE'] = (me, nick, channelName) =>
       user = this.register(nick)
       this.join(user, channelName)
       @pluginManager.process 'INVITE', me, nick, channelName, (processed) =>
+        originalCommands['INVITE'].apply(@server.commands, [me, nick, channelName])
 
-    @server.events.on "KICK", (me, channels, users, kickMessage) =>
+    @server.commands['KICK'] = (me, channels, users, kickMessage) =>
       @pluginManager.process 'KICK', me, channels.split(','), users.split(','), kickMessage, (processed) =>
+        originalCommands['KICK'].apply(@server.commands, [me, channels, users, kickMessage])
 
   start: ->
-    this.installEventHandler()
+    this.installCommandHandler()
     @server.start()
 
 module.exports = Ircd

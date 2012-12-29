@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "coffee-script": "",
-    "ircdjs": "",
+    "ircdjs": "https://api.github.com/repos/alexyoung/ircd.js/tarball",
     "twitter": "",
     "underscore": "",
     "async": ""
