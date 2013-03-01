@@ -37,6 +37,9 @@ class TypableMap
     @n = @n % @length
     id
 
+  get: (id) ->
+    @map[id]
+
   clear: ->
     @n = 0
     @map = {}

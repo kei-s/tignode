@@ -13,4 +13,7 @@ class Storage
     _.find @cache.map, (data) ->
       data.id == statusId
 
+  getByTypableId: (typablId) ->
+    @cache.get(typablId)
+
 module.exports = Storage
