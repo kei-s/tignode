@@ -1,19 +1,21 @@
 {
-  "author": "kei",
   "name": "tignode",
+  "description": "Twitter IRC Gateway powered by Node",
+  "homepage": "https://github.com/kei-s/tignode",
+  "author": "kei <kei.shiratsuchi@gmail.com> (https://github.com/kei-s)",
+  "keywords": ["irc", "twitter"],
+
   "version": "0.0.0",
+  "engines": {"node": ">=0.7.7"},
+  "bin": "./bin/tignode",
+  "scripts": {"start": "./bin/tignode"},
   "repository": {
-    "url": ""
-  },
-  "engines": {
-    "node": "~0.6.1"
-  },
-  "scripts": {
-    "start": "./bin/tignode"
+    "type": "git",
+    "url": "https://github.com/kei-s/tignode"
   },
   "dependencies": {
     "coffee-script": "",
-    "ircdjs": "https://api.github.com/repos/alexyoung/ircd.js/tarball",
+    "ircdjs": "0.0.17",
     "twitter": "",
     "underscore": "",
     "async": ""
