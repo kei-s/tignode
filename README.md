@@ -17,11 +17,8 @@ Access to ```localhost:16673``` with your twitter screen_name as nick.
 ## Configuration
 Config file is ```config/config.json```.
 
-## Node Version
-For Emoji(絵文字) Handling, use 0.7.7 or later. (Earlier 0.7.7, it works except for message containing Emoji)
-
 ## (want) TODO
+- Mention, Fav, RT using Typablemap (Want now!)
 - Specing (hmm.. Is it difficult?)
-- Mention, Fav, RT using Typablemap
 - Grouping (remaining implementation KICK. PART)
-- Event (like Favorited, Followed) would be announced in #events
+- Event (like Favorited, Followed) would be announced in #events channel
