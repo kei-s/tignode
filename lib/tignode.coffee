@@ -19,7 +19,7 @@ class TigNode
       access_token_key: @access_token.data.access_token_key,
       access_token_secret: @access_token.data.access_token_secret
     }))
-    @pluginManager = new PluginManager(path.join(__dirname,'..','plugins'))
+    @pluginManager = new PluginManager(path.join(__dirname,'plugins'))
     @storage = new Storage(@config.storage)
     @ircd = new Ircd(@config.ircd, @twitter, @pluginManager, @storage)
     @stream = new Stream(@ircd, @twitter, @pluginManager, @storage)

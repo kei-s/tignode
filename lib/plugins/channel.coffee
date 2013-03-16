@@ -1,5 +1,6 @@
+path = require 'path'
 _ = require 'underscore'
-Config = require '../lib/config'
+Config = require path.join(__dirname, '..', 'config')
 {EventEmitter} = require 'events'
 
 class Channel extends EventEmitter
