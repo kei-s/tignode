@@ -3,7 +3,7 @@ _ = require 'underscore'
 
 class Favorite extends EventEmitter
   constructor: ->
-    this.on 'CTCP', (process, me, type, text, channel, twitter, storage) ->
+    this.on 'CTCP', (process, me, type, text, channel, twitter, storage, ircd) ->
       [command, typableIds...] = text.split(' ')
       if command == 'fav' || command == 'favorite'
         _.each typableIds, (typableId) ->

@@ -12,13 +12,13 @@ class Base extends EventEmitter
     this.on 'retweet', (process, user, subject, data) ->
       this.publish(process, user, '♻ RT @'+data.retweeted_status.user.screen_name+': '+subject)
 
-    this.on 'PRIVMSG', (process, me, message, channel, twitter, storage) ->
+    this.on 'PRIVMSG', (process, me, message, channel, twitter, storage, ircd) ->
       # assign process.message for next plugins
       process.message = message
       process.done()
 
     # Callback sample
-    this.on 'CTCP', (process, me, type, text, channel, twitter, storage) ->
+    this.on 'CTCP', (process, me, type, text, channel, twitter, storage, ircd) ->
       process.done()
 
     # Callback sample

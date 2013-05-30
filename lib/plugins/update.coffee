@@ -2,7 +2,7 @@
 
 class Update extends EventEmitter
   constructor: ->
-    this.on 'PRIVMSG', (process, me, message, channel, twitter, storage) ->
+    this.on 'PRIVMSG', (process, me, message, channel, twitter, storage, ircd) ->
       if process.message
         twitter.post '/statuses/update.json', { status: process.message }, (data) =>
           console.log data

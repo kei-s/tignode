@@ -54,10 +54,10 @@ class Ircd
                                    .replace(/\\\\/g, '\\')
           [type, texts...] = ctcp_message.split(' ')
           text = texts.join(' ')
-          @pluginManager.process 'CTCP', me, type, text, target, @twitter, @storage, (processed) =>
+          @pluginManager.process 'CTCP', me, type, text, target, @twitter, @storage, @, (processed) =>
             originalCommands['PRIVMSG'].apply(@server.commands, [me, target, processed.message])
       else
-        @pluginManager.process 'PRIVMSG', me, message, target, @twitter, @storage, (processed) =>
+        @pluginManager.process 'PRIVMSG', me, message, target, @twitter, @storage, @, (processed) =>
           originalCommands['PRIVMSG'].apply(@server.commands, [me, target, processed.message])
 
     @server.commands['JOIN'] = (me, channelNames) =>
