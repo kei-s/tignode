@@ -31,6 +31,7 @@ class PluginManager
     index.forEach (file) =>
       _.each require(path.join(@dir,path.basename(file, '.coffee','.js'))), (plugin, name) =>
         @plugins[name] =  plugin
+        console.log "Plugin Loaded: #{name}"
 
   process: (event, parameters..., callback) ->
     process = new Process(event, _.values(@plugins), parameters, callback)

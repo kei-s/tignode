@@ -18,6 +18,8 @@ class TigNode
     @twitter = new Twitter(_.extend(@config.twitter,{
       access_token_key: @access_token.data.access_token_key,
       access_token_secret: @access_token.data.access_token_secret
+      rest_base: 'https://api.twitter.com/1.1',
+      user_stream_base: 'https://userstream.twitter.com/1.1',
     }))
     @pluginManager = new PluginManager(path.join(__dirname,'plugins'))
     @storage = new Storage(@config.storage)

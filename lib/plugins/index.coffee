@@ -7,5 +7,6 @@ module.exports = [
   'use_typablemap',
   'show_reply',
   'channel',
+  'favorite',
   'update'
 ]
