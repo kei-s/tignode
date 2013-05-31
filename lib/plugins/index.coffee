@@ -6,6 +6,7 @@ module.exports = [
   'show_typablemap',
   'show_reply',
   'channel',
+  'reply',
   'favorite',
   'retweet',
   'update'
