@@ -9,7 +9,7 @@ class Favorite extends EventEmitter
         _.each typableIds, (typableId) ->
           data = storage.getByTypableId(typableId)
           twitter.post '/favorites/create.json', {id: data.id_str}, (response)->
-            ircd.noticeAll(me, "Favorite #{data.user.screen_name}: #{data.text}")
+            ircd.noticeAll(me, "[Favorite] #{data.user.screen_name}: #{data.text}")
             console.log response
       process.done()
 
