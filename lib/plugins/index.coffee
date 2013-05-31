@@ -7,5 +7,6 @@ module.exports = [
   'show_reply',
   'channel',
   'favorite',
+  'retweet',
   'update'
 ]
