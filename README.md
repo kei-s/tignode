@@ -5,6 +5,10 @@
 - Powered by Node.js
 - Grouping via channel
  - Original grouping on apps. (Not lists on twitter.com)
+- Mention, Fav and RT from typablemap
+ - `/me re hoge Message`
+ - `/me fav fuga`
+ - `/me rt piyo`
 
 ## Usage
 Clone this repository, and run.
