@@ -3,7 +3,7 @@ _ = require 'underscore'
 {User} = require 'ircdjs/lib/user'
 
 class Ircd
-  constructor: (@config, @twitter, @pluginManager, @storage) ->
+  constructor: (@config, @twitter, @pluginManager, @storage, @tignode) ->
     @server = new Server
     @server.config = @config
     @events = @server.events
@@ -42,8 +42,19 @@ class Ircd
       originalCommands[command] = @server.commands[command]
 
     @server.commands['PRIVMSG'] = (me, target, message) =>
-      return if target == '#welcome'
-      if message[0] == '\u0001' && message.lastIndexOf('\u0001') > 0
+      if target == '#welcome'
+        # on PIN Code
+        verifier = message
+        @twitter.oauth.getOAuthAccessToken @token, @token_secret, verifier, (err, access_token_key, access_token_secret, results) =>
+          @access_token.save {
+            access_token_key: access_token_key,
+            access_token_secret: access_token_secret
+          }
+          @twitter.options.access_token_key = access_token_key
+          @twitter.options.access_token_secret = access_token_secret
+          @tignode.start_stream(me)
+      else if message[0] == '\u0001' && message.lastIndexOf('\u0001') > 0
+        # parse CTCP message
         regexp = /\u0001([^\u0001]*)\u0001/g
         while (matched = regexp.exec message)?
           ctcp_message = matched[1].replace(/\u0010n/g,'\n')
@@ -57,6 +68,7 @@ class Ircd
           @pluginManager.process 'CTCP', me, type, text, target, @twitter, @storage, @, (processed) =>
             originalCommands['PRIVMSG'].apply(@server.commands, [me, target, processed.message])
       else
+        # normal message
         @pluginManager.process 'PRIVMSG', me, message, target, @twitter, @storage, @, (processed) =>
           originalCommands['PRIVMSG'].apply(@server.commands, [me, target, processed.message])
 
@@ -77,6 +89,16 @@ class Ircd
     @server.commands['KICK'] = (me, channels, users, kickMessage) =>
       @pluginManager.process 'KICK', me, channels.split(','), users.split(','), kickMessage, (processed) =>
         originalCommands['KICK'].apply(@server.commands, [me, channels, users, kickMessage])
+
+  register_oauth: (user, access_token) ->
+    this.join(user, '#welcome')
+    @twitter.oauth.getOAuthRequestToken (err, token, token_secret, parsedQueryString) =>
+      @token = token
+      @token_secret = token_secret
+      @access_token = access_token
+      authorize_url = @twitter.options.authorize_url + '?oauth_token=' + token
+      this.message 'tignode', '#welcome', "Please approve me at #{authorize_url}"
+      this.message 'tignode', '#welcome', "And input PIN code here"
 
   start: ->
     this.installCommandHandler()
