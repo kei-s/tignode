@@ -23,13 +23,17 @@ class TigNode
     }))
     @pluginManager = new PluginManager(path.join(__dirname,'plugins'))
     @storage = new Storage(@config.storage)
-    @ircd = new Ircd(@config.ircd, @twitter, @pluginManager, @storage)
+    @ircd = new Ircd(@config.ircd, @twitter, @pluginManager, @storage, @tignode)
     @stream = new Stream(@ircd, @twitter, @pluginManager, @storage)
     @ircd.register('tignode')
 
   config: ->
     file = path.join __dirname,'..','config','config.json'
     JSON.parse(fs.readFileSync(file).toString())
+
+  start_stream: (user) ->
+    @stream.start(user)
+
 
   registration: ->
     tignode = this
@@ -40,26 +44,9 @@ class TigNode
       if user.registered
         _.bind( ->
           if @twitter.options.access_token_key && @twitter.options.access_token_secret
-            @stream.start(user)
+            start_stream(user)
           else
-            @ircd.join(user, '#welcome')
-            @twitter.oauth.getOAuthRequestToken (err, token, token_secret, parsedQueryString) =>
-              # on PIN Code
-              @ircd.events.once "PRIVMSG", (user, target, verifier) =>
-                if user == _user && target == "#welcome"
-                  @twitter.oauth.getOAuthAccessToken token, token_secret, verifier, (err, access_token, access_token_secret, results) =>
-                    @access_token.save {
-                      access_token_key: access_token,
-                      access_token_secret: access_token_secret
-                    }
-                    @twitter.options.access_token_key = access_token
-                    @twitter.options.access_token_secret = access_token_secret
-                    @stream.start(user)
-
-              authorize_url = @twitter.options.authorize_url + '?oauth_token=' + token
-              message = "Please approve me at #{authorize_url}"
-              @ircd.message 'tignode', '#welcome', message
-              @ircd.message 'tignode', '#welcome', "And input PIN code here"
+            @ircd.register_oauth(user, @access_token)
         , tignode)()
 
   start: ->
