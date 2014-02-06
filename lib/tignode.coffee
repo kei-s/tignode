@@ -44,7 +44,7 @@ class TigNode
       if user.registered
         _.bind( ->
           if @twitter.options.access_token_key && @twitter.options.access_token_secret
-            start_stream(user)
+            this.start_stream(user)
           else
             @ircd.register_oauth(user, @access_token)
         , tignode)()
