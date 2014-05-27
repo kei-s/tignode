@@ -7,7 +7,7 @@ class Stream extends EventEmitter
     @numReceived = 0
     @lastReceived = new Date()
     @numRetry = 0
-    @stallSec = 30
+    @stallSec = 60 * 5
     @connected = false
 
   filter: (data) ->
@@ -89,6 +89,10 @@ class Stream extends EventEmitter
       stream.on 'end', (response) =>
         if @connected
           @emit 'end', 'END'
+      setTimeout =>
+        unless @connected
+          console.log 'Timeout in connect'
+      , @stallSec + 30
 
   monitor: =>
     now = new Date()
