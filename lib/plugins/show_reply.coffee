@@ -14,6 +14,12 @@ class ShowReply extends EventEmitter
 
   addReply: (process, storage, in_reply_to_status_id) ->
     if data = storage.getByStatusId(in_reply_to_status_id)
-      process.message = process.message + " 14>> #{data.user.screen_name}: #{data.text}"
+      process.message = process.message + this.replyMessage(data.user.screen_name, data.text)
+
+  replyMessage: (screen_name, text) ->
+    " 14>> #{screen_name}: " +
+      text.split('\n').map((line) ->
+        "14#{line}"
+      ).join('\n')
 
 module.exports.showReply = new ShowReply
