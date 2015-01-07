@@ -1,18 +1,20 @@
+_ = require 'underscore'
 {EventEmitter} = require 'events'
 
 class ExpandMedia extends EventEmitter
   constructor: ->
     ['tweet', 'retweet'].forEach (event) =>
       this.on event, (process, user, subject, data) =>
-        if data.entities.media?
-          this.expand_media(process, data.entities.media)
+        if data.extended_entities?
+          this.expand_media(process, data.extended_entities.media)
         else
           process.done()
 
   expand_media: (process, media) ->
-    media.forEach (data) ->
-      if data.media_url?
-        process.message = process.message.replace(data.url, data.media_url)
+    media_urls = _.map media, (data) ->
+      data.media_url
+
+    process.message = process.message.replace(media[0].url, media_urls.join(" "))
     process.done()
 
 module.exports.expandMedia = new ExpandMedia
