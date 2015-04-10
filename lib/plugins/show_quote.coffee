@@ -8,7 +8,10 @@ class ShowQuote extends EventEmitter
       process.done()
 
   addQuote: (process, data) ->
-    process.message = process.message + this.quoteMessage(data.quoted_status.user.screen_name, data.quoted_status.text)
+    process.message = this.chopQuoteUrl(process.message, data.quoted_status.user.screen_name, data.quoted_status_id_str) + this.quoteMessage(data.quoted_status.user.screen_name, data.quoted_status.text)
+
+  chopQuoteUrl: (message, screen_name, id_str) ->
+    message.replace(" https://twitter.com/#{screen_name}/status/#{id_str}", '')
 
   quoteMessage: (screen_name, text) ->
     " 14Q> #{screen_name}: " +
