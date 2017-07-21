@@ -92,7 +92,7 @@ class Stream extends EventEmitter
       setTimeout =>
         unless @connected
           console.log 'Timeout in connect'
-      , @stallSec + 30
+      , (@stallSec + 30) * 1000
 
   monitor: =>
     now = new Date()

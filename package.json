@@ -3,12 +3,18 @@
   "description": "Twitter IRC Gateway powered by Node",
   "homepage": "https://github.com/kei-s/tignode",
   "author": "kei <kei.shiratsuchi@gmail.com> (https://github.com/kei-s)",
-  "keywords": ["irc", "twitter"],
-
+  "keywords": [
+    "irc",
+    "twitter"
+  ],
   "version": "0.0.0",
-  "engines": {"node": ">=0.7.7"},
+  "engines": {
+    "node": ">=0.7.7"
+  },
   "bin": "./bin/tignode",
-  "scripts": {"start": "./bin/tignode"},
+  "scripts": {
+    "start": "./bin/tignode"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/kei-s/tignode"
@@ -17,6 +23,7 @@
     "coffee-script": "",
     "ircdjs": "0.0.17",
     "twitter": "",
+    "oauth": "",
     "underscore": "",
     "async": ""
   },

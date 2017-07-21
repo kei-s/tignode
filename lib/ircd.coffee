@@ -1,4 +1,5 @@
 _ = require 'underscore'
+OAuth = require 'oauth'
 {Server} = require 'ircdjs/lib/server'
 {User} = require 'ircdjs/lib/user'
 
@@ -7,6 +8,11 @@ class Ircd
     @server = new Server
     @server.config = @config
     @events = @server.events
+    @oauth = new OAuth.OAuth('https://api.twitter.com/oauth/request_token',
+                             'https://api.twitter.com/oauth/access_token',
+                             @twitter.options.consumer_key,
+                             @twitter.options.consumer_secret,
+                             '1.0A', null, 'HMAC-SHA1');
 
   join: (user, channelName) ->
     @server.channels.join(user, channelName)
@@ -45,7 +51,7 @@ class Ircd
       if target == '#welcome'
         # on PIN Code
         verifier = message
-        @twitter.oauth.getOAuthAccessToken @token, @token_secret, verifier, (err, access_token_key, access_token_secret, results) =>
+        @oauth.getOAuthAccessToken @token, @token_secret, verifier, (err, access_token_key, access_token_secret, results) =>
           @access_token.save {
             access_token_key: access_token_key,
             access_token_secret: access_token_secret
@@ -92,11 +98,11 @@ class Ircd
 
   register_oauth: (user, access_token) ->
     this.join(user, '#welcome')
-    @twitter.oauth.getOAuthRequestToken (err, token, token_secret, parsedQueryString) =>
+    @oauth.getOAuthRequestToken (err, token, token_secret, parsedQueryString) =>
       @token = token
       @token_secret = token_secret
       @access_token = access_token
-      authorize_url = @twitter.options.authorize_url + '?oauth_token=' + token
+      authorize_url = 'https://api.twitter.com/oauth/authorize?oauth_token=' + token
       this.message 'tignode', '#welcome', "Please approve me at #{authorize_url}"
       this.message 'tignode', '#welcome', "And input PIN code here"
 
